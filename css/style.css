@@ -2789,20 +2789,18 @@ video::-moz-media-controls {
     font-family: 'Dancing Script', cursive;
     font-size: 16px;
     font-weight: 400;
-    color: #fff; /* Blanc pour contraste sur l'image */
+    color: #000; /* Noir pour visibilité */
     cursor: pointer;
     transition: all 0.5s ease-out;
     opacity: 0;
     visibility: hidden;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Ombre pour visibilité */
+    text-shadow: none; /* Pas d'ombre */
     letter-spacing: 0.5px;
-    background: url('WhatsApp Image 2026-02-11 at 06.58.02.jpeg') no-repeat center center / cover;
-    padding: 20px;
 }
 
 .credit:hover {
     font-size: 18px;
-    color: #f0f0f0; /* Légèrement plus clair au hover */
+    color: #333; /* Gris foncé au hover */
 }
 
 .heart {
