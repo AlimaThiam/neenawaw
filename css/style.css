@@ -1591,7 +1591,7 @@ video::-moz-media-controls {
    ========================================================================== */
 
 .info-section {
-    background: linear-gradient(180deg, #fdf8f0 0%, #f5ead6 40%, #f0e0c8 70%, #fdf8f0 100%);
+    background: url('WhatsApp Image 2026-02-11 at 06.58.02.jpeg') no-repeat center center / cover;
     color: #3a3028;
     padding: 60px 20px 40px;
     display: none;
