@@ -1,0 +1,2835 @@
+/* ==========================================================================
+   INVITATION DE MARIAGE - Mouhamed & Khadija
+   Fichier CSS principal
+   
+   Structure :
+   1. Reset & Base
+   2. Bouton Audio (fixe en haut à droite)
+   3. Splash Screen (écran d'accueil)
+   4. Fleurs CSS (petites, moyennes, grandes)
+   5. Sections Histoire (fond blanc + texte)
+   6. Sections Illustrations (scènes colorées)
+   7. Section Infos Mariage (fond bleu/violet)
+      - Compte à rebours
+      - Carte du lieu
+      - Programme de la journée
+      - Liste de mariage / IBAN
+      - Message de remerciement
+   8. Animations (keyframes)
+   9. Responsive (tablette/desktop)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. RESET & BASE — Réinitialisation des styles par défaut du navigateur
+   ========================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Inclut padding et border dans la taille */
+}
+
+html {
+    scroll-behavior: smooth;
+    /* Défilement fluide quand on clique sur un lien ancre */
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    /* Police principale du site */
+    overflow-x: hidden;
+    /* Empêche le scroll horizontal */
+    background: #fff;
+    color: #3a3a3a;
+    /* Gris foncé pour le texte */
+    -webkit-font-smoothing: antialiased;
+    /* Lissage des polices sur Safari/Chrome */
+}
+
+
+/* ==========================================================================
+   2. BOUTON AUDIO — Bouton fixe en haut à droite pour la musique
+   ========================================================================== */
+
+.audio-btn {
+    position: fixed;
+    /* Reste visible même en scrollant */
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    /* Au-dessus de tout le contenu */
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    /* Rond */
+    background: rgba(255, 255, 255, 0.85);
+    /* Blanc semi-transparent */
+    backdrop-filter: blur(10px);
+    /* Effet de flou derrière le bouton */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    /* Ombre légère */
+    transition: transform 0.3s ease;
+}
+
+.audio-btn:hover {
+    transform: scale(1.1);
+    /* Grossit légèrement au survol */
+}
+
+/* Icône SVG dans le bouton */
+.audio-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: #888;
+    /* Gris par défaut */
+    transition: fill 0.3s;
+}
+
+/* Quand la musique joue, l'icône devient rose */
+.audio-btn.playing svg {
+    fill: #e8836b;
+}
+
+/* Style du bouton quand on est sur la section bleue (infos mariage) */
+.audio-btn.on-dark {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.audio-btn.on-dark svg {
+    fill: rgba(255, 255, 255, 0.7);
+}
+
+.audio-btn.on-dark.playing svg {
+    fill: #fff;
+}
+
+
+
+
+/* ==========================================================================
+   2.5. BOUTON SCROLL FLOTTANT — Flèche pour indiquer le scroll
+   ========================================================================== */
+
+.scroll-hint-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #5a3e2b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.scroll-hint-btn.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-hint-btn.at-top {
+    animation: attractScroll 1.5s ease-in-out infinite;
+    pointer-events: none;
+    cursor: default;
+}
+
+@keyframes attractScroll {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    25% {
+        transform: translateY(-3px) scale(1.02);
+        opacity: 0.95;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        transform: translateY(0) scale(1.05);
+        opacity: 1;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+    75% {
+        transform: translateY(3px) scale(1.02);
+        opacity: 0.95;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.scroll-hint-btn.at-bottom {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.scroll-hint-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-hint-btn:focus-visible {
+    outline: 2px solid rgba(196, 164, 114, 0.6);
+    outline-offset: 2px;
+}
+
+
+
+
+/* ==========================================================================
+   3. SPLASH SCREEN — Enveloppe avec sceau de cire
+   Un fond rosé/doré avec une enveloppe au centre.
+   Le sceau de cire M&K est cliquable : il se brise et l'enveloppe s'ouvre.
+   ========================================================================== */
+
+/* --- Conteneur principal du splash (couvre tout l'écran) --- */
+.envelope-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Fond dégradé rosé/crème avec reflets dorés */
+    background: linear-gradient(145deg, #fdf6ee 0%, #f5e6d3 30%, #f0d9c4 50%, #f5e6d3 70%, #fdf6ee 100%);
+    overflow: hidden;
+    transition: opacity 1s ease;
+    cursor: default;
+}
+
+/* Phase 2 : le splash disparaît après l'animation d'ouverture */
+.envelope-splash.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- Particules dorées scintillantes --- */
+.sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, #d4a853 0%, transparent 70%);
+    border-radius: 50%;
+    animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1);
+    }
+}
+
+/* --- L'enveloppe --- */
+.envelope {
+    position: relative;
+    width: 300px;
+    height: 220px;
+    /* Animation d'entrée de l'enveloppe */
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    animation: envelopeAppear 1.2s ease 0.3s forwards;
+}
+
+@keyframes envelopeAppear {
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* --- Corps de l'enveloppe (rectangle principal) --- */
+.envelope-body {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 170px;
+    /* Dégradé crème/beige pour un look papier élégant */
+    background: linear-gradient(180deg, #faf3e8 0%, #f0e4d1 50%, #e8d5bc 100%);
+    border-radius: 4px 4px 12px 12px;
+    /* Ombre portée pour l'effet 3D */
+    box-shadow:
+        0 8px 32px rgba(139, 109, 71, 0.25),
+        0 2px 8px rgba(139, 109, 71, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    /* Bordure dorée subtile */
+    border: 1px solid rgba(196, 164, 114, 0.3);
+    overflow: hidden;
+}
+
+/* Lignes décoratives à l'intérieur de l'enveloppe */
+.envelope-inner-lines {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0.15;
+}
+
+.envelope-inner-lines .line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #b8956a, transparent);
+    border-radius: 1px;
+}
+
+.envelope-inner-lines .line:nth-child(2) {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.envelope-inner-lines .line:nth-child(3) {
+    width: 50%;
+    margin: 0 auto;
+}
+
+/* --- Rabat supérieur de l'enveloppe (triangle) --- */
+.envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    /* Le rabat est un triangle créé avec clip-path */
+    background: linear-gradient(180deg, #e8d5bc 0%, #f0e4d1 100%);
+    clip-path: polygon(0 0, 50% 70%, 100% 0);
+    z-index: 1;
+    /* Ombre sous le rabat */
+    filter: drop-shadow(0 2px 4px rgba(139, 109, 71, 0.15));
+    /* Point de pivot pour l'animation d'ouverture */
+    transform-origin: top center;
+    transition: transform 0.8s ease, opacity 0.5s ease;
+}
+
+/* Quand l'enveloppe s'ouvre, le rabat se lève */
+.envelope-flap.open {
+    transform: rotateX(180deg);
+    opacity: 0;
+}
+
+/* --- SCEAU DE CIRE — L'élément principal cliquable --- */
+.wax-seal {
+    position: absolute;
+    /* Centré sur l'enveloppe, à cheval entre le rabat et le corps */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    z-index: 10;
+    cursor: pointer;
+    /* Animation d'apparition du sceau */
+    opacity: 0;
+    animation: sealAppear 0.8s ease 1s forwards;
+}
+
+@keyframes sealAppear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) rotate(-20deg);
+    }
+
+    70% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(5deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+}
+
+/* Forme irrégulière du sceau (bordure ondulée) */
+.wax-seal::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    /* Dégradé doré riche pour la cire */
+    background: radial-gradient(circle at 35% 35%,
+            #e6b84f 0%,
+            #d4a43a 20%,
+            #c4922e 40%,
+            #b8832a 55%,
+            #a67325 70%,
+            #946628 85%,
+            #825a22 100%);
+    border-radius: 50%;
+    /* Bords irréguliers du sceau (forme ondulée) */
+    clip-path: polygon(50% 0%, 63% 3%, 75% 2%, 83% 8%, 93% 12%,
+            97% 23%, 100% 35%, 98% 48%, 100% 60%,
+            96% 72%, 92% 82%, 83% 90%, 73% 96%,
+            62% 100%, 50% 98%, 38% 100%, 27% 96%,
+            17% 90%, 8% 82%, 4% 72%, 0% 60%,
+            2% 48%, 0% 35%, 3% 23%, 7% 12%,
+            17% 8%, 25% 2%, 37% 3%);
+    /* Ombre pour l'effet 3D du sceau */
+    box-shadow:
+        0 4px 16px rgba(139, 90, 20, 0.5),
+        inset 0 2px 4px rgba(255, 215, 100, 0.3),
+        inset 0 -2px 6px rgba(100, 60, 10, 0.4);
+}
+
+/* Reflet lumineux sur le sceau */
+.wax-seal::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 15px;
+    width: 35px;
+    height: 20px;
+    background: radial-gradient(ellipse, rgba(255, 230, 150, 0.5) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 2;
+}
+
+/* Cercle intérieur du sceau (zone des initiales) */
+.seal-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    /* Bordure gravée */
+    border: 2px solid rgba(255, 215, 100, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    /* Cercle intérieur légèrement enfoncé */
+    box-shadow: inset 0 1px 3px rgba(100, 60, 10, 0.3);
+}
+
+/* Les initiales M&K */
+.seal-initials {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    font-weight: 700;
+    /* Texte doré avec reflets */
+    color: #f5e0a0;
+    text-shadow:
+        0 1px 2px rgba(100, 60, 10, 0.5),
+        0 -1px 1px rgba(255, 230, 150, 0.3);
+    letter-spacing: 1px;
+}
+
+/* Animation de pulsation douce du sceau (invite au clic) */
+.wax-seal {
+    animation: sealAppear 0.8s ease 1s forwards, sealPulse 2.5s ease-in-out 2s infinite;
+}
+
+@keyframes sealPulse {
+
+    0%,
+    100% {
+        filter: brightness(1) drop-shadow(0 0 0 transparent);
+    }
+
+    50% {
+        filter: brightness(1.1) drop-shadow(0 0 15px rgba(214, 170, 60, 0.4));
+    }
+}
+
+/* --- Animation de CASSURE du sceau --- */
+
+/* Phase 1 : le sceau tremble quand on clique */
+.wax-seal.shaking {
+    animation: sealShake 0.4s ease forwards !important;
+}
+
+@keyframes sealShake {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    15% {
+        transform: translate(-50%, -50%) rotate(-3deg) scale(1.05);
+    }
+
+    30% {
+        transform: translate(-50%, -50%) rotate(3deg) scale(1.05);
+    }
+
+    45% {
+        transform: translate(-50%, -50%) rotate(-2deg) scale(1.03);
+    }
+
+    60% {
+        transform: translate(-50%, -50%) rotate(2deg) scale(1.03);
+    }
+
+    75% {
+        transform: translate(-50%, -50%) rotate(-1deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+}
+
+/* Fissures SVG qui apparaissent sur le sceau */
+.seal-cracks {
+    position: absolute;
+    inset: -6px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.seal-cracks.visible {
+    opacity: 1;
+}
+
+.seal-cracks line {
+    stroke: rgba(60, 30, 5, 0.7);
+    stroke-width: 2;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 2px rgba(255, 200, 80, 0.5));
+}
+
+/* Phase 2 : le sceau se brise en deux moitiés */
+.seal-half {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.seal-half-inner {
+    position: absolute;
+    top: 0;
+    width: 200%;
+    height: 100%;
+    /* Hérite du dégradé doré du sceau */
+    background: radial-gradient(circle at 35% 35%,
+            #e6b84f 0%, #d4a43a 20%, #c4922e 40%,
+            #b8832a 55%, #a67325 70%, #946628 85%, #825a22 100%);
+    border-radius: 50%;
+}
+
+.seal-half.left {
+    left: 0;
+    clip-path: polygon(0 0, 52% 0, 48% 100%, 0 100%);
+    animation: halfFlyLeft 0.7s ease-out forwards;
+}
+
+.seal-half.left .seal-half-inner {
+    left: 0;
+}
+
+.seal-half.right {
+    right: 0;
+    clip-path: polygon(48% 0, 100% 0, 100% 100%, 52% 100%);
+    animation: halfFlyRight 0.7s ease-out forwards;
+}
+
+.seal-half.right .seal-half-inner {
+    right: 0;
+}
+
+@keyframes halfFlyLeft {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-80px, 60px) rotate(-25deg);
+        opacity: 0;
+    }
+}
+
+@keyframes halfFlyRight {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(80px, 60px) rotate(25deg);
+        opacity: 0;
+    }
+}
+
+/* Le sceau original disparaît après la cassure */
+.wax-seal.broken {
+    opacity: 0 !important;
+    animation: none !important;
+    transition: opacity 0.1s ease;
+}
+
+/* Fragments/poussière du sceau (petites particules) */
+.seal-fragment {
+    position: absolute;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.seal-fragment-piece {
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, #d4a43a, #946628);
+    clip-path: polygon(50% 0%, 100% 40%, 80% 100%, 20% 100%, 0% 40%);
+    animation: fragmentFly 0.8s ease-out forwards;
+}
+
+@keyframes fragmentFly {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* --- Texte "Appuyez sur le sceau pour ouvrir" --- */
+.envelope-tap {
+    position: absolute;
+    bottom: 50px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #b8956a;
+    opacity: 0;
+    animation: fadeInUp 1s ease 1.8s forwards;
+}
+
+/* Bordure pailletée autour de l'écran */
+.envelope-splash::before {
+    content: '';
+    position: absolute;
+    inset: 15px;
+    border: 1px solid rgba(196, 164, 114, 0.2);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+/* Reflet doré en haut */
+.envelope-splash::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(214, 170, 60, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   4. PAGE TITRE — Écran "L'histoire de Mouhamed & Khadija"
+   Apparaît après l'enveloppe, puis disparaît pour laisser place aux stories
+   ========================================================================== */
+
+.title-page {
+    position: fixed;
+    inset: 0;
+    z-index: 8888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Fond : image + léger dégradé pour chaleur et lisibilité */
+    background: linear-gradient(145deg, rgba(255, 240, 240, 0.35) 0%, rgba(255, 228, 230, 0.25) 25%, rgba(255, 214, 220, 0.2) 50%, rgba(255, 228, 230, 0.25) 75%, rgba(255, 240, 240, 0.35) 100%), url('../WhatsApp Image 2026-02-11 at 06.58.24.jpeg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+    overflow: hidden;
+}
+
+.title-page.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.title-page.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- Cœurs flottants --- */
+.title-hearts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.floating-love-heart {
+    position: absolute;
+    bottom: -60px;
+    opacity: 0;
+    animation: heartRise var(--duration, 4s) ease-in var(--delay, 0s) forwards;
+    filter: blur(0px);
+}
+
+/* Différentes tailles de cœurs */
+.floating-love-heart.small {
+    font-size: 16px;
+    filter: blur(0.5px);
+}
+
+.floating-love-heart.medium {
+    font-size: 26px;
+}
+
+.floating-love-heart.large {
+    font-size: 40px;
+}
+
+.floating-love-heart.xlarge {
+    font-size: 55px;
+}
+
+@keyframes heartRise {
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.3);
+    }
+
+    10% {
+        opacity: 0.9;
+        transform: translateY(-10vh) translateX(var(--sway, 20px)) rotate(10deg) scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: translateY(-50vh) translateX(calc(var(--sway, 20px) * -1)) rotate(-10deg) scale(0.95);
+    }
+
+    80% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-110vh) translateX(var(--sway, 20px)) rotate(15deg) scale(0.6);
+    }
+}
+
+/* --- Particules brillantes/étoiles --- */
+.title-sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.title-sparkle-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, rgba(255, 100, 130, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: sparkleGlow var(--dur, 2s) ease-in-out var(--del, 0s) infinite;
+}
+
+@keyframes sparkleGlow {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+.title-page-content {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: opacity 1.2s ease 0.3s, transform 1.2s ease 0.3s;
+    z-index: 10;
+    position: relative;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 30px 28px;
+    border-radius: 18px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.title-page.visible .title-page-content {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.title-page-ornament {
+    font-size: 1.6rem;
+    margin: 12px 0;
+    animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    15% {
+        transform: scale(1.25);
+    }
+
+    30% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.15);
+    }
+
+    60% {
+        transform: scale(1);
+    }
+}
+
+.title-page-heading {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.title-page-names {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.7), 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.title-page-subtitle {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: #fff;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Overlay sombre pour lisibilité du texte sur la photo */
+.title-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.30) 40%, rgba(0, 0, 0, 0.30) 60%, rgba(0, 0, 0, 0.45) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Halo rose au centre derrière le texte */
+.title-page::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 100, 130, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Image de fond sans étirement */
+.title-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.title-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    filter: saturate(1.03) contrast(0.98);
+    transform: translateZ(0);
+}
+
+
+/* ==========================================================================
+   5. STORIES — Conteneur des 12 stories style WhatsApp
+   Plein écran, barres de progression en haut, navigation tap
+   ========================================================================== */
+
+/* --- Conteneur principal des stories --- */
+.stories-container {
+    position: fixed;
+    inset: 0;
+    z-index: 7777;
+    background: #000;
+    display: none;
+    /* Caché par défaut, affiché en JS */
+    overflow: hidden;
+}
+
+.stories-container.active {
+    display: block;
+}
+
+/* ==========================================================================
+   INTERLUDE PHOTO — Flash plein écran
+   ========================================================================== */
+
+.interlude-photo {
+    position: fixed;
+    inset: 0;
+    z-index: 8000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.interlude-photo.visible {
+    display: flex;
+    opacity: 1;
+}
+
+.interlude-photo.fade-out {
+    opacity: 0;
+}
+
+.interlude-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    background: #0a0a0a;
+}
+
+.interlude-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    background: #0a0a0a;
+}
+
+.interlude-video-controls {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: min(92vw, 560px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.interlude-video-controls .video-nav-btn {
+    padding: 12px 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.interlude-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.04) 40%, rgba(0, 0, 0, 0.04) 60%, rgba(0, 0, 0, 0.25) 100%);
+    z-index: 2;
+}
+
+.interlude-text {
+    position: absolute;
+    bottom: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    font-size: 3rem;
+    opacity: 0;
+    animation: interludeFadeIn 1.2s ease 0.6s forwards;
+}
+
+@keyframes interludeFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- Story photo plein écran --- */
+.story-photo-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    height: 100%;
+}
+
+.story-photo {
+    max-width: 88%;
+    max-height: 70vh;
+    border-radius: 14px;
+    object-fit: contain;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Story vidéo --- */
+.story-video-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.story-video {
+    width: 88%;
+    max-width: 380px;
+    max-height: 55vh;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+    background: #000;
+}
+
+/* Boutons précédent/suivant sur le slide vidéo */
+.video-slide-nav {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.video-nav-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s;
+}
+
+.video-nav-btn:hover,
+.video-nav-btn:active {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* Z-index élevé pour les boutons vidéo */
+.video-slide-nav {
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    justify-content: space-between;
+    pointer-events: auto;
+}
+
+/* --- Indicateur de points (dots) en bas --- */
+.stories-dots {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+.stories-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transition: all 0.4s ease;
+}
+
+.stories-dots .dot.active {
+    background: #fff;
+    transform: scale(1.3);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* --- Chaque slide de story --- */
+.story-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    /* CapCut-style transitions */
+    transition: opacity 0.7s ease-out, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.7s ease-out;
+    will-change: transform, opacity, filter;
+}
+
+.story-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none !important;
+    filter: none !important;
+}
+
+/* --- Transitions CapCut : chaque story sort/entre avec un effet différent --- */
+
+/* Zoom In depuis petit */
+.story-slide.tr-zoom-in {
+    transform: scale(0.2) rotateZ(-5deg);
+    opacity: 0;
+}
+
+/* Zoom Out depuis grand */
+.story-slide.tr-zoom-out {
+    transform: scale(2.2) rotateZ(3deg);
+    opacity: 0;
+    filter: blur(8px);
+}
+
+/* Slide depuis la droite */
+.story-slide.tr-slide-right {
+    transform: translateX(100%) rotateZ(-8deg);
+    opacity: 0;
+}
+
+/* Slide depuis la gauche */
+.story-slide.tr-slide-left {
+    transform: translateX(-100%) rotateZ(8deg);
+    opacity: 0;
+}
+
+/* Slide du bas vers le haut */
+.story-slide.tr-slide-up {
+    transform: translateY(100%) scaleX(0.95);
+    opacity: 0;
+}
+
+/* Rotation + zoom */
+.story-slide.tr-rotate {
+    transform: scale(0.4) rotate(25deg);
+    opacity: 0;
+}
+
+/* Flip horizontal */
+.story-slide.tr-flip {
+    transform: perspective(1200px) rotateY(90deg) rotateZ(5deg);
+    opacity: 0;
+}
+
+/* Blur fade */
+.story-slide.tr-blur {
+    transform: scale(1.15) rotateZ(2deg);
+    opacity: 0;
+    filter: blur(15px);
+}
+
+/* Slide diagonale */
+.story-slide.tr-diagonal {
+    transform: translate(70%, 70%) scale(0.5) rotateZ(-15deg);
+    opacity: 0;
+}
+
+/* Bounce arrivée par le haut */
+.story-slide.tr-drop {
+    transform: translateY(-100%) scale(0.8);
+    opacity: 0;
+}
+
+/* Sortie de la story précédente */
+.story-slide.leaving {
+    transition: opacity 0.6s ease-in, transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.6s ease-in;
+    pointer-events: none;
+}
+
+.story-slide.leaving.leave-zoom {
+    transform: scale(1.5);
+    opacity: 0;
+    filter: blur(5px);
+}
+
+.story-slide.leaving.leave-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.story-slide.leaving.leave-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.story-slide.leaving.leave-up {
+    transform: translateY(-80%);
+    opacity: 0;
+}
+
+.story-slide.leaving.leave-shrink {
+    transform: scale(0.2);
+    opacity: 0;
+}
+
+.story-slide.leaving.leave-rotate {
+    transform: scale(0.5) rotate(-15deg);
+    opacity: 0;
+}
+
+.story-slide.leaving.leave-blur {
+    transform: scale(0.95);
+    opacity: 0;
+    filter: blur(12px);
+}
+
+.story-slide.leaving.leave-flip {
+    transform: perspective(800px) rotateY(-90deg);
+    opacity: 0;
+}
+
+/* Fond dégradé de chaque story */
+.story-bg {
+    position: absolute;
+    inset: 0;
+}
+
+/* Vidéo de fond dans un story-bg */
+.story-bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100% !important; /* FORCER */
+    height: 100% !important; /* FORCER */
+    object-fit: contain !important; /* FORCER */
+    object-position: center center !important; /* FORCER */
+    background: #000 !important; /* FORCER FOND NOIR */
+}
+
+/* Slide 12 (data-index="11") : rendu plus net pour la video */
+.story-slide[data-index="11"] .story-bg-video {
+    object-fit: cover !important;
+    filter: contrast(1.06) saturate(1.06) !important;
+}
+
+/* Cache les contrôles vidéo natifs (play, pause buttons) */
+video {
+    outline: none !important /* Enlève outline au select */;
+}
+
+video::-webkit-media-controls {
+    display: none !important;
+}
+
+video::-moz-media-controls {
+    display: none !important;
+}
+
+.story-bg-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Arrière-plan flouté (pour éviter un fond vide quand on est en "contain") */
+.story-bg-image-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    transform: scale(1.12);
+    filter: blur(18px) brightness(0.9) saturate(1.1);
+    opacity: 0.85;
+}
+
+@keyframes kenBurnsSoft {
+    from { transform: scale(1.12); }
+    to { transform: scale(1.22); }
+}
+
+@keyframes kenBurnsMain {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+}
+
+.story-slide.kb-anim .story-bg-image-bg {
+    animation: kenBurnsSoft var(--kb-dur, 6000ms) ease-in-out both;
+}
+
+.story-slide.kb-anim .story-bg-image {
+    animation: kenBurnsMain var(--kb-dur, 6000ms) ease-in-out both;
+    transform-origin: center center;
+    will-change: transform;
+}
+
+/* Permet de désactiver le "zoom" (crop) sur un slide précis */
+.story-slide[data-media-fit="contain"] .story-bg-image,
+.story-slide[data-media-fit="contain"] .story-bg-video {
+    object-fit: contain !important;
+    object-position: center center !important;
+    background: #000;
+}
+
+/* Slide 13: petit rendu "glass" pour éviter que ça fasse fade */
+.story-slide[data-index="12"] .story-content {
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+}
+
+/* Slide 13: vignette légère pour casser le "fond blanc" */
+.story-slide[data-index="12"] .story-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.45) 75%, rgba(0, 0, 0, 0.55) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.story-slide[data-index="12"] .story-bg-image-bg,
+.story-slide[data-index="12"] .story-bg-image {
+    z-index: 1;
+}
+
+.story-slide[data-index="12"] .story-content {
+    z-index: 10;
+}
+
+/* Collage multi-vidéos côte à côte */
+.story-bg-collage {
+    background: #000;
+}
+
+.video-collage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Deux colonnes de taille égale */
+    gap: 0; /* Pas d'espace */
+    padding: 0;
+    align-items: center;
+    justify-items: center;
+}
+
+.collage-video {
+    width: 100% !important; /* FORCER */
+    height: 100% !important; /* FORCER */
+    object-fit: contain !important; /* FORCER */
+    object-position: center center !important; /* FORCER */
+    background: #000 !important; /* FORCER FOND NOIR */
+}
+
+/* Overlay sombre sur les slides avec vidéo de fond */
+.story-bg-video+.story-bg-overlay,
+.story-bg:has(.story-bg-video)::before,
+.story-bg-collage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.20);
+    z-index: 1;
+}
+
+/* Effet mot par mot sur les slides vidéo */
+.reveal-words .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    margin-right: 0.28em;
+}
+
+.reveal-words .word.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-caption {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal-caption.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Dégradé sombre en bas pour lisibilité du texte */
+.story-bg::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.28) 0%, transparent 100%);
+}
+
+.story-slide.story-clear-video .story-bg:has(.story-bg-video)::before {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.story-slide.story-clear-video .story-bg::after {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.26) 0%, transparent 100%);
+}
+
+.story-slide.story-clear-video .story-bg-video {
+    filter: brightness(1.12) contrast(1.05) saturate(1.05);
+}
+
+/* Augmente la luminosité pour les vidéos sombres */
+.story-slide.story-bright-video .story-bg-video {
+    filter: brightness(1.8) contrast(1.25) saturate(1.15);
+}
+
+/* Réduit l'overlay sombre pour les vidéos lumineuses */
+.story-slide.story-bright-video .story-bg::before {
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.story-slide.story-bright-video .story-bg::after {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, transparent 100%) !important;
+}
+
+/* Contenu de chaque story (emoji + texte) */
+.story-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 16px 20px 24px;
+    max-width: 92%;
+    width: min(92%, 520px);
+    align-self: flex-end;
+    margin-bottom: 28px;
+    /* Animation d'entrée */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+}
+
+.story-slide.active .story-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Positionne le texte plus bas uniquement sur la 2e vidéo (index 10) */
+.story-slide[data-index="10"] .story-content {
+    align-self: flex-end !important;
+    margin-bottom: 6px !important;
+    padding-bottom: 8px !important;
+}
+
+/* Emoji principal de la story */
+.story-emoji {
+    font-size: 2rem; /* Taille réduite */
+    margin-bottom: 16px;
+    animation: emojiPop 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes emojiPop {
+    0% {
+        transform: scale(0.3) rotate(-20deg);
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Texte principal de la story */
+.story-text-content {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    line-height: 1.6;
+    color: #fff;
+    margin: 0 auto;
+    max-width: 100%;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 0, 0, 0.6), 1px 1px 2px rgba(0, 0, 0, 0.8);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Effet de machine à écrire */
+.story-text-content.typing-effect {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: .15em solid orange; /* Le curseur */
+    animation:
+        textFadeInUp 0.8s ease 0.3s forwards,
+        typing 3.5s steps(40, end) 0.5s 1 normal both,
+        blink-caret .75s step-end infinite;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: orange;
+    }
+}
+
+/* Légende/sous-titre de la story */
+.story-caption {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.78rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    font-weight: 700;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95), 0 0 22px rgba(0, 0, 0, 0.65), 1px 1px 3px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+/* --- Zones de navigation (tap gauche / droite) --- */
+.story-nav {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    pointer-events: none;
+}
+
+.story-nav-left,
+.story-nav-right {
+    flex: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+}
+
+
+/* ==========================================================================
+   6. (Espace réservé pour de futures sections)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   7. SECTION INFOS — Design original crème/doré chaleureux et fun
+   Timeline verticale, cartes arrondies, confettis, ambiance fête
+   ========================================================================== */
+
+.info-section {
+    background: linear-gradient(180deg, #fdf8f0 0%, #f5ead6 40%, #f0e0c8 70%, #fdf8f0 100%);
+    color: #3a3028;
+    padding: 60px 20px 40px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-section.visible-section {
+    display: flex;
+}
+
+/* When the info section is shown, ensure timeline items and fade-in blocks become visible
+   (useful if IntersectionObserver didn't trigger while the section was display:none) */
+
+
+/* Ensure timeline text contrasts properly over the background image */
+.info-section.visible-section .info-programme .tl-text strong {
+    color: #3a3028 !important;
+    text-shadow: 0 2px 8px rgba(245,224,160,0.12);
+}
+.info-section.visible-section .info-programme .tl-text span {
+    color: #a08870 !important;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.18);
+}
+/* --- Confettis décoratifs --- */
+.info-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.confetti-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: confettiFall var(--cDur, 5s) ease-in var(--cDel, 0s) infinite;
+}
+
+@keyframes confettiFall {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) rotate(0deg);
+    }
+
+    10% {
+        opacity: 0.7;
+    }
+
+    90% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg);
+    }
+}
+
+/* --- En-tête --- */
+.info-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.info-bismillah {
+    font-size: 1.4rem;
+    color: #b8956a;
+    margin-bottom: 15px;
+    font-family: serif;
+}
+
+.info-couple-emoji {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.info-names {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #5a3e2b;
+    line-height: 1.2;
+}
+
+.info-amp {
+    display: block;
+    font-size: 1.4rem;
+    color: #c4926e;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    margin: 2px 0;
+}
+
+.info-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #8a7460;
+    margin-top: 10px;
+}
+
+/* --- Carte date en grand --- */
+.info-date-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px 40px;
+    text-align: center;
+    margin-bottom: 35px;
+    box-shadow: 0 8px 30px rgba(180, 140, 90, 0.12);
+    border: 2px solid rgba(196, 164, 114, 0.2);
+}
+
+.info-date-day {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #b8956a;
+}
+
+.info-date-number {
+    font-family: 'Dancing Script', cursive;
+    font-size: 5rem;
+    font-weight: 700;
+    color: #c4926e;
+    line-height: 1;
+    margin: 5px 0;
+}
+
+.info-date-month {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #5a3e2b;
+}
+
+/* --- Compte à rebours circulaire --- */
+.info-countdown-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.info-cd-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: #b8956a;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.info-countdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-cd-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-cd-circle {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #d4b896;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(180, 140, 90, 0.15);
+}
+
+.info-cd-num {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #5a3e2b;
+}
+
+.info-cd-label {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a08870;
+}
+
+.info-cd-sep {
+    font-size: 1.4rem;
+    color: #d4b896;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* --- Cartes génériques (lieu, cadeau) --- */
+.info-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 30px 25px;
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 25px rgba(180, 140, 90, 0.1);
+    text-align: center;
+    border: 1px solid rgba(196, 164, 114, 0.15);
+}
+
+.info-card-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.info-card-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem;
+    color: #5a3e2b;
+    margin-bottom: 10px;
+}
+
+.info-card-text {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: #6a5a4a;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.info-card-text small {
+    font-size: 0.8rem;
+    color: #a08870;
+}
+
+.info-maps-btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #d4b896, #c4926e);
+    color: #fff;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(196, 146, 110, 0.3);
+}
+
+.info-maps-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(196, 146, 110, 0.4);
+}
+
+/* --- Programme / Timeline verticale --- */
+.info-programme {
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 35px;
+}
+
+.info-section-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem;
+    color: #5a3e2b;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.info-timeline {
+    position: relative;
+    padding-left: 70px;
+}
+
+/* Ligne verticale de la timeline */
+.info-timeline::before {
+    content: '';
+    position: absolute;
+    left: 55px;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    background: linear-gradient(180deg, #d4b896, #e8d5bc, #d4b896);
+    border-radius: 3px;
+}
+
+.tl-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.tl-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.tl-time {
+    position: absolute;
+    left: -70px;
+    top: 8px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #c4926e;
+    width: 45px;
+    text-align: right;
+}
+
+/* Point sur la timeline */
+.tl-dot {
+    position: absolute;
+    left: -20px;
+    top: 10px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #d4b896;
+    z-index: 2;
+}
+
+.tl-content {
+    background: #fff;
+    border-radius: 18px;
+    padding: 15px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 15px rgba(180, 140, 90, 0.1);
+    border: 1px solid rgba(196, 164, 114, 0.12);
+    flex: 1;
+}
+
+.tl-emoji {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.tl-text strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: #3a3028;
+    margin-bottom: 2px;
+}
+
+.tl-text span {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.8rem;
+    color: #a08870;
+}
+
+/* --- IBAN dans la carte cadeau --- 
+.info-gift .iban-box {
+    background: #fdf8f0;
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-family: 'Lato', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    border: 1px solid rgba(196, 164, 114, 0.2);
+    color: #5a3e2b;
+}
+
+.info-gift .iban-box:hover {
+    background: #f5ead6;
+    transform: scale(1.02);
+}
+
+.info-gift .iban-box .copy-icon {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+.info-gift .iban-copied {
+    font-size: 0.8rem;
+    color: #6fcf97;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.info-gift .iban-copied.show {
+    opacity: 1;
+}*/
+
+/* --- Footer fun --- */
+.info-footer {
+    text-align: center;
+    margin: 20px 0 25px;
+    padding: 30px 20px;
+}
+
+.info-footer-emoji {
+    font-size: 50px;
+    margin-bottom: 10px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.info-footer-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #5a3e2b;
+    margin-bottom: 8px;
+}
+
+.info-footer-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #8a7460;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.info-footer-hearts {
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+}
+
+/* Bouton revoir */
+.revoir-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #d4b896, #c4926e);
+    border-radius: 25px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(196, 146, 110, 0.3);
+}
+
+.revoir-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(196, 146, 110, 0.4);
+}
+
+
+/* ==========================================================================
+   8. ANIMATIONS — Keyframes pour les différentes animations du site
+   ========================================================================== */
+
+/* Animation de flottement des fleurs (monte/descend doucement) */
+@keyframes floatFlower {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(5deg);
+    }
+}
+
+/* Animation d'apparition depuis le bas */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation de pulsation (icône mosquée) */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Animation des coeurs qui s'envolent quand on clique */
+@keyframes floatHeart {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-120px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Coeur flottant (créé dynamiquement en JS) */
+.floating-heart {
+    position: absolute;
+    font-size: 20px;
+    animation: floatHeart 3s ease-in-out forwards;
+    pointer-events: none;
+}
+
+/* --- Classes utilitaires pour les animations au scroll --- */
+
+/* Apparition en fondu depuis le bas */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Apparition en zoom */
+.scale-in {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scale-in.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+
+/* ==========================================================================
+   9. RESPONSIVE — Adaptations pour tablette et desktop
+   ========================================================================== */
+
+@media (min-width: 768px) {
+
+    /* Texte plus grand sur écran large */
+    .story-text {
+        max-width: 500px;
+        font-size: 1.3rem;
+    }
+
+    .illust-text {
+        max-width: 500px;
+        font-size: 1.25rem;
+    }
+
+    /* Noms plus grands */
+    .couple-names {
+        font-size: 3rem;
+    }
+}
+
+/* --------------------------------------------------
+   Override: Agrandir la vidéo de la slide "La demande"
+   Appliqué spécifiquement à la slide avec la classe
+   .story-video-slide pour ne rien casser ailleurs.
+   -------------------------------------------------- */
+.story-slide.story-video-slide .story-content {
+    max-width: 100%;
+    width: 100%;
+    padding: 18px;
+}
+
+.story-slide.story-combo-video-slide .story-content {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.story-slide.story-combo-video-slide .story-video {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    object-fit: contain;
+    border-radius: 0;
+    box-shadow: none;
+    background: #000;
+}
+
+.story-slide.story-combo-video-slide .story-text-content,
+.story-slide.story-combo-video-slide .story-caption {
+    position: relative;
+    z-index: 15;
+}
+
+.story-slide.story-combo-video-slide .combo-video-controls {
+    width: min(94vw, 520px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+    z-index: 20;
+}
+
+.story-slide.story-video-slide .story-video {
+    width: 100%;
+    max-width: none;
+    max-height: 85vh;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    object-fit: contain;
+    background: #000;
+    display: block;
+}
+
+/* Responsive: agrandir la vidéo de la slide "La demande" sur mobile */
+@media (max-width: 767px) {
+    .story-slide.story-video-slide .story-content.story-video-content {
+        position: relative;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 100%;
+        overflow: visible;
+    }
+
+    .story-slide.story-video-slide .story-video {
+        width: 100%;
+        height: auto;
+        max-height: calc(100vh - 180px);
+        object-fit: contain;
+        border-radius: 8px;
+        background: #000;
+        display: block;
+        flex-shrink: 1;
+    }
+
+    .story-slide.story-video-slide .video-slide-nav {
+        position: relative;
+        width: 100%;
+        display: flex !important;
+        justify-content: space-between;
+        gap: 12px;
+        z-index: 1000;
+        padding: 0 4px;
+    }
+
+    .story-slide.story-video-slide .video-nav-btn {
+        flex: 1;
+        padding: 14px 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: #fff;
+        border-radius: 30px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        text-align: center;
+    }
+
+    .story-slide.story-video-slide .story-caption {
+        margin-top: 2px;
+        z-index: 2;
+    }
+
+    .story-slide.story-combo-video-slide .combo-video-controls {
+        width: calc(100vw - 20px);
+        gap: 8px;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE AMÉLIORATION — Adaptation complète pour tous les écrans
+   ========================================================================== */
+
+/* Mobile petit (< 480px) */
+@media (max-width: 479px) {
+    /* Story content */
+    .story-content {
+        padding: 12px 16px 16px;
+        margin-bottom: 16px;
+        max-width: 95%;
+    }
+
+    .story-text-content {
+        font-size: clamp(1rem, 3vw, 1.15rem);
+        line-height: 1.5;
+        font-weight: 600;
+    }
+
+    .story-caption {
+        font-size: 0.65rem;
+        padding: 4px 11px;
+        font-weight: 700;
+    }
+
+    /* Collage vidéos: garde un vrai collage 2x2 */
+    .video-collage {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+        gap: 2px;
+        padding: 4px;
+    }
+
+    /* Images responsives */
+    .title-bg img,
+    .interlude-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    /* Audio button plus petit */
+    .audio-btn {
+        width: 40px;
+        height: 40px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .audio-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Mobile moyen (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+    .story-content {
+        padding: 14px 18px 18px;
+        margin-bottom: 20px;
+        max-width: 93%;
+    }
+
+    .story-text-content {
+        font-size: clamp(1.05rem, 3.2vw, 1.2rem);
+        line-height: 1.55;
+        font-weight: 650;
+    }
+
+    .story-caption {
+        font-size: 0.68rem;
+        padding: 5px 12px;
+        font-weight: 700;
+    }
+
+    /* Collage vidéos: 2 colonnes */
+    .video-collage {
+        grid-template-columns: 1fr 1fr;
+        gap: 3px;
+        padding: 5px;
+    }
+
+}
+
+/* Tablette (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .story-content {
+        padding: 18px 22px 24px;
+        margin-bottom: 24px;
+        max-width: 85%;
+    }
+
+    .story-text-content {
+        font-size: clamp(1.15rem, 3.8vw, 1.35rem);
+        line-height: 1.55;
+        font-weight: 650;
+    }
+
+    .story-caption {
+        font-size: 0.72rem;
+        padding: 6px 14px;
+        font-weight: 700;
+    }
+
+    /* Collage vidéos: 2 colonnes */
+    .video-collage {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        padding: 6px;
+    }
+
+    .stories-dots .dot {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1025px) {
+    .story-content {
+        padding: 20px 26px 28px;
+        margin-bottom: 28px;
+        max-width: 80%;
+    }
+
+    .story-text-content {
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
+        line-height: 1.6;
+        font-weight: 650;
+    }
+
+    .story-caption {
+        font-size: 0.75rem;
+        padding: 7px 16px;
+        font-weight: 700;
+    }
+
+    /* Collage vidéos: 2x2 grille */
+    .video-collage {
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        padding: 8px;
+    }
+
+    .stories-dots .dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Extra Large Desktop (> 1440px) */
+@media (min-width: 1441px) {
+    .story-bg-video,
+    .collage-video {
+        object-fit: cover;
+    }
+
+    .story-content {
+        max-width: 75%;
+    }
+
+    .stories-container {
+        max-width: 100%;
+    }
+}
+
+/* Story 3 : configuration centralisee du collage (DRY) */
+.story-slide[data-index="2"] {
+    /* Vidéo principale: pas coupée. Les bandes sont “remplies” par un fond flouté. */
+    --slide3-collage-fit: contain;
+    --slide3-collage-position: center center;
+}
+
+/* Story 3 : forcer le collage sans zoom (Safari/iPhone inclus) */
+.story-slide[data-index="2"] .video-collage {
+    position: absolute !important;
+    inset: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    justify-items: stretch !important;
+    align-content: stretch !important;
+    gap: 2px !important;
+    padding: 0 !important;
+}
+
+.story-slide[data-index="2"] .collage-video {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: block !important;
+    object-fit: var(--slide3-collage-fit) !important;
+    object-position: var(--slide3-collage-position) !important;
+    transform: none !important;
+    background: transparent !important;
+}
+
+/* Slide 3: chaque case devient un "tile" avec fond flouté */
+.story-slide[data-index="2"] .collage-tile {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+.story-slide[data-index="2"] .collage-video-bg {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    filter: blur(12px) brightness(0.9) saturate(1.05);
+    transform: scale(1.1);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+/* Le texte du slide 3 reste en overlay et ne déplace jamais la grille vidéo */
+.story-slide[data-index="2"] .story-content {
+    position: absolute !important;
+    left: 50% !important;
+    bottom: 18px !important;
+    transform: translateX(-50%) !important;
+    width: min(92%, 520px) !important;
+    margin: 0 !important;
+    align-self: auto !important;
+    z-index: 12 !important;
+}
+
+/* === STORY 10 : Collage horizontal 2 vidéos (DRY - même pattern que slide 3) === */
+.story-slide[data-index="9"] {
+    --slide10-collage-fit: contain;
+    --slide10-collage-position: center center;
+}
+
+/* Story 10 : Grille 2 colonnes, 1 ligne (horizontal) - PAS DE ZOOM */
+.story-slide[data-index="9"] .video-collage {
+    position: absolute !important;
+    inset: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 1fr !important;
+    align-items: stretch !important;
+    justify-items: stretch !important;
+    align-content: stretch !important;
+    gap: 3px !important;
+    padding: 0 !important;
+}
+
+.story-slide[data-index="9"] .collage-video {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: block !important;
+    object-fit: var(--slide10-collage-fit) !important;
+    object-position: var(--slide10-collage-position) !important;
+    transform: none !important;
+    background: transparent !important;
+}
+
+/* Story 10: chaque vidéo devient un "tile" avec fond flou en arrière-plan */
+.story-slide[data-index="9"] .collage-tile {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+.story-slide[data-index="9"] .collage-video-bg {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    filter: blur(12px) brightness(0.9) saturate(1.05);
+    transform: scale(1.1);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+/* Centrer le contenu pour les stories 7, 8, 11 et 12 */
+.story-slide[data-index="6"] .story-content,
+.story-slide[data-index="7"] .story-content,
+.story-slide[data-index="11"] .story-content {
+    align-self: center !important;
+    margin-bottom: 0 !important;
+}
+
+/* === STORY 13 : Animation de zoom sur image pendant le reveal texte === */
+/* Animation: zoom progressif pendant 3.5s (durée du reveal) */
+@keyframes imageZoomIn {
+    0% {
+        transform: scale(1) translateZ(0);
+    }
+    100% {
+        transform: scale(1.15) translateZ(0);
+    }
+}
+
+/* Applique le zoom quand le texte se révèle (classe 'zooming') */
+.story-slide[data-index="12"] .story-bg-image.zooming {
+    animation: imageZoomIn 3.5s ease-out forwards;
+}
+
+/* Remet en état normal quand fini */
+.story-slide[data-index="12"] .story-bg-image {
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+/* Centrer le contenu pour les stories 7, 8, 11 et 12 */
+
+/* Story 12 : Forcer le centrage vertical */
+.story-slide.story-centered {
+    justify-content: center !important;
+}
+
+.story-slide.story-centered .story-content {
+    align-self: center !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    transform: translateY(0) !important;
+}
+
+/* Forcer le texte tout en bas UNIQUEMENT sur la 2e vidéo (index 10) */
+.story-slide[data-index="10"] .story-content {
+    position: absolute !important;
+    left: 50% !important;
+    bottom: 6px !important;
+    transform: translateX(-50%) !important;
+    width: min(92%, 520px) !important;
+    margin: 0 !important;
+    padding: 12px 20px 10px !important;
+    align-self: auto !important;
+    z-index: 12 !important;
+}
+
+/* Background for final info section (date / lieu / programme) */
+/* Background for final info section (date / lieu / programme) */
+.info-section {
+    /* base container for info area; image is rendered in ::before so we can apply filters */
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    padding: 48px 20px 80px;
+}
+
+.info-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../WhatsApp Image 2026-02-11 at 06.58.01.jpeg");
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    filter: grayscale(100%) brightness(0.6) contrast(1.05);
+    transform-origin: center center;
+    z-index: 0;
+}
+
+/* ensure content sits above the background image */
+.info-section > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* keep confetti above the image but below main content */
+.info-confetti {
+    z-index: 1;
+}
+
+/* Add subtle dark card backgrounds to ensure text blocks remain readable */
+.info-card,
+.info-programme,
+.info-countdown-section,
+.info-footer {
+    background: rgba(0,0,0,0.35);
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+.info-section .info-card-title,
+.info-section .info-section-title,
+.info-section .info-footer-title,
+.info-section .info-date-day,
+.info-section .info-date-month {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.85);
+}
+
+/* Color adjustments for better harmony with background photo */
+.info-section,
+.info-section p,
+.info-section .info-card-text,
+.info-section .info-footer-text,
+.info-section .tl-text span,
+.info-section .tl-text strong {
+    color: #ffffff !important;
+}
+
+.info-section .info-section-title,
+.info-section .info-card-title {
+    color: #f5e0a0 !important; /* warm accent */
+    letter-spacing: 0.6px;
+    font-weight: 700;
+}
+
+.info-section .info-names {
+    color: #fff !important;
+    font-family: 'Dancing Script', cursive;
+    text-shadow: 0 3px 18px rgba(0,0,0,0.85);
+}
+
+.info-section .info-tagline {
+    color: #f7f1e6 !important;
+    opacity: 0.95;
+}
+
+/* Mobile-specific readability tweaks for the info section */
+@media (max-width: 479px) {
+    .info-section {
+        padding: 28px 12px 60px;
+    }
+
+    /* Make the background image fit the width on phones and keep it grayscale */
+    .info-section::before {
+        background-size: 100% auto !important;
+        background-position: center top !important;
+        filter: grayscale(100%) brightness(0.55) contrast(1.05);
+        background-attachment: scroll !important;
+    }
+
+    .info-card,
+    .info-programme,
+    .info-countdown-section,
+    .info-footer {
+        background: rgba(0,0,0,0.78) !important;
+        padding: 12px 14px !important;
+        border-radius: 10px !important;
+    }
+
+    .info-section .info-section-title {
+        font-size: 1.6rem !important;
+        margin-bottom: 10px;
+    }
+
+    .info-date-day {
+        font-size: 2.4rem !important;
+    }
+
+    .info-date-month {
+        font-size: 1.1rem !important;
+    }
+
+    .info-card-text,
+    .info-footer-text,
+    .tl-text span {
+        font-size: 1rem !important;
+        line-height: 1.4 !important;
+    }
+
+    .tl-time {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Extra readability: badge backgrounds for header/name on small screens */
+@media (max-width: 767px) {
+    .info-header,
+    .info-names,
+    .info-tagline {
+        background: rgba(0,0,0,0.6);
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 10px;
+    }
+
+    .info-names {
+        font-size: 1.6rem !important;
+        font-weight: 700;
+    }
+}
+
+/* ==========================================================================
+   CRÉDIT — Crédit discret
+   ========================================================================== */
+
+.credit {
+    text-align: center;
+    margin: 40px auto 20px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 16px;
+    font-weight: 400;
+    color: #5a3e2b; /* Couleur sombre pour contraste sur fond blanc */
+    cursor: pointer;
+    transition: all 0.5s ease-out;
+    opacity: 0;
+    visibility: hidden;
+    text-shadow: none; /* Supprimer l'ombre pour plus de clarté */
+    letter-spacing: 0.5px;
+}
+
+.credit:hover {
+    font-size: 18px;
+    color: #3a2a1f; /* Plus sombre au hover */
+}
+
+.heart {
+    display: inline-block;
+    animation: pulseHeart 2s ease-in-out infinite;
+}
+
+@keyframes pulseHeart {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes fadeInCredit {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+    .credit {
+        bottom: 15px;
+        font-size: 14px;
+    }
+    .credit:hover {
+        font-size: 16px;
+    }
+}

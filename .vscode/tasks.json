@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run static site",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"start",
+				"chrome",
+				"index.html"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Run static site",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"start",
+				"chrome",
+				"index.html"
+			],
+			"isBackground": false
+		}
+	]
+}

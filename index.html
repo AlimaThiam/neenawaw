@@ -1,0 +1,515 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Empêche le zoom sur mobile pour une meilleure expérience -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Titre de la page (visible dans l'onglet du navigateur) -->
+    <title>Mouhamed & Khadija - Nos Festivités</title>
+
+    <!-- Polices Google Fonts :
+         - Dancing Script : Police cursive pour les noms du couple
+         - Playfair Display : Police serif élégante pour les textes de l'histoire
+         - Lato : Police sans-serif pour le texte courant
+         - Caveat : Police à la mode pour le texte des histoires -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Feuille de style CSS (séparée dans son propre fichier) -->
+    <link rel="stylesheet" href="css/style.css?v=26">
+</head>
+
+<body>
+
+    <!-- ================================================================
+         SPLASH SCREEN — Enveloppe avec sceau de cire
+         L'utilisateur appuie sur le sceau pour le briser et ouvrir l'enveloppe
+         ================================================================ -->
+    <div class="envelope-splash" id="splash">
+
+        <!-- Particules dorées scintillantes en arrière-plan -->
+        <div class="sparkles" id="sparkles"></div>
+
+        <!-- L'enveloppe -->
+        <div class="envelope" id="envelope">
+            <!-- Rabat supérieur de l'enveloppe (triangle) -->
+            <div class="envelope-flap" id="envelopeFlap"></div>
+
+            <!-- Corps de l'enveloppe -->
+            <div class="envelope-body">
+                <!-- Lignes décoratives (simule le papier à l'intérieur) -->
+                <div class="envelope-inner-lines">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+            </div>
+
+            <!-- Sceau de cire — l'élément principal cliquable -->
+            <div class="wax-seal" id="waxSeal">
+                <!-- Cercle intérieur avec les initiales -->
+                <div class="seal-inner">
+                    <span class="seal-initials">M&K</span>
+                </div>
+                <!-- Bords irréguliers du sceau (créés en CSS) -->
+            </div>
+        </div>
+
+        <!-- Texte d'indication en bas -->
+        <div class="envelope-tap">Appuyez sur le sceau pour ouvrir</div>
+    </div>
+
+    <!-- Vidéo "fantôme" pour débloquer l'autoplay sur mobile -->
+    <video id="unlock-video" muted playsinline webkit-playsinline style="display:none; position:absolute;"></video>
+
+    <!-- ================================================================
+         BOUTON AUDIO — Fixe en haut à droite
+         Permet de lancer/couper la musique de fond
+         2 icônes SVG : son activé et son coupé
+         ================================================================ -->
+    <button class="audio-btn" id="audioBtn" aria-label="Activer / désactiver le son">
+        <!-- Unmute icon (visible par défaut) -->
+        <svg id="icon-unmute" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 9v6h4l5 5V4L9 9H5z" />
+            <path d="M16.5 12c0-1.77-.77-3.37-2-4.47v8.94c1.23-1.1 2-2.7 2-4.47z" />
+            <path
+                d="M18.5 12c0 2.5-1 4.75-2.6 6.36l1.42 1.42C19.07 18.9 20 15.61 20 12s-.93-6.9-2.68-7.78l-1.42 1.42C17.5 7.25 18.5 9.5 18.5 12z" />
+        </svg>
+        <!-- Mute icon (hidden) -->
+        <svg id="icon-mute" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:none">
+            <path d="M16.5 12c0-1.77-.77-3.37-2-4.47v8.94c1.23-1.1 2-2.7 2-4.47z" />
+            <path
+                d="M19 9.41L17.59 8 15 10.59 12.41 8 11 9.41 13.59 12 11 14.59 12.41 16 15 13.41 17.59 16 19 14.59 16.41 12 19 9.41z" />
+        </svg>
+    </button>
+
+
+
+    <!-- ================================================================
+         BOUTON SCROLL FLOTTANT — Flèche pour indiquer le scroll
+         ================================================================ -->
+    <button id="scrollHintBtn" class="scroll-hint-btn" aria-label="Scroll to top">↓</button>
+
+
+
+    <!-- ================================================================
+         PAGE TITRE — Apparaît après l'ouverture de l'enveloppe
+         Affiche "L'histoire de Mouhamed & Khadija" puis disparaît
+         ================================================================ -->
+    <div class="title-page" id="titlePage">
+        <!-- Image background (object-fit cover to prevent stretching) -->
+        <div class="title-bg">
+            <img src="WhatsApp Image 2026-02-11 at 06.58.24.jpeg" alt="Mouhamed & Khadija" />
+        </div>
+        <!-- Cœurs flottants romantiques -->
+        <div class="title-hearts" id="titleHearts"></div>
+        <!-- Petites particules brillantes -->
+        <div class="title-sparkles" id="titleSparkles"></div>
+        <div class="title-page-content">
+            <div class="title-page-ornament">❤️</div>
+            <h1 class="title-page-heading">L'histoire de</h1>
+            <h2 class="title-page-names">Mouhamed & Khadija</h2>
+            <p class="title-page-subtitle">de l'amitié au mariage religieux, Alhamdulillah</p>
+            <div class="title-page-ornament">❤️</div>
+        </div>
+    </div>
+
+
+    <!-- ================================================================
+         STORIES — 12 stories avec transitions CapCut
+         Navigation par tap gauche/droite, indicateur points en bas
+         ================================================================ -->
+    <div class="stories-container" id="storiesContainer">
+
+        <!-- Indicateur de points discret en bas -->
+        <div class="stories-dots" id="storiesDots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+
+        <!-- Story 1 : Le commencement -->
+        <div class="story-slide" data-index="0">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-11 at 06.57.59_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Je vous raconte l'histoire de Mouhamed et Khadija : tout a commencé par la volonté d'Allah.</p>
+                <span class="story-caption reveal-caption">Le début de leur histoire</span>
+            </div>
+        </div>
+
+        <!-- Story 2 : La rencontre -->
+        <div class="story-slide" data-index="1">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-11 at 06.54.55_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Au début, ils discutaient simplement comme des amis.</p>
+                <span class="story-caption reveal-caption">Une amitié sincère</span>
+            </div>
+        </div>
+
+        <!-- Story 3 : Les premiers mots (Collage multi-vidéos) -->
+        <div class="story-slide" data-index="2">
+            <div class="story-bg story-bg-collage">
+                <div class="video-collage">
+                    <video class="collage-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                        <source src="WhatsApp Video 2026-02-11 at 06.55.00_compatible.mp4" type="video/mp4">
+                    </video>
+                    <video class="collage-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                        <source src="WhatsApp Video 2026-02-11 at 06.58.25_compatible.mp4" type="video/mp4">
+                    </video>
+                    <video class="collage-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                        <source src="WhatsApp Video 2026-02-11 at 06.58.47_compatible.mp4" type="video/mp4">
+                    </video>
+                    <video class="collage-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                        <source src="WhatsApp Video 2026-02-11 at 06.56.43_compatible.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Les échanges entre eux ont continué naturellement, et la complicité s'est peu à peu installée entre eux.</p>
+                <span class="story-caption reveal-caption">Des discussions qui rapprochent</span>
+            </div>
+        </div>
+
+        <!-- Story 4 : Le tournant -->
+        <div class="story-slide" data-index="3">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-11 at 06.55.04_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Un jour, lors d'une dispute, Mouhamed lui a lancé : « Tu ne sais pas qu'on est en couple ? »</p>
+                <span class="story-caption reveal-caption">Le tournant inattendu</span>
+            </div>
+        </div>
+
+        <!-- Story 5 : Le vrai départ -->
+        <div class="story-slide story-clear-video story-wait-video-end" data-index="4">
+            <div class="story-bg" style="background: #000;">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata">
+                    <source src="WhatsApp Video 2026-02-11 at 06.57.52_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Khadija lui a répondu « Tu viens et tu me dis, comme ça, qu'on est en couple ? Tu me dragues même pas ?.... » — et c'est là que tout a vraiment commencé.</p>
+                <span class="story-caption reveal-caption">Le début de la relation</span>
+            </div>
+        </div>
+
+        <!-- Story 6 : La construction -->
+        <div class="story-slide" data-index="5">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-11 at 06.55.09_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Avec le temps, leur relation s'est construite dans le respect, la confiance et la foi.</p>
+                <span class="story-caption reveal-caption">Une relation solide</span>
+            </div>
+        </div>
+
+        <!-- Story 7 : Présentation au père -->
+        <div class="story-slide" data-index="6">
+            <div class="story-bg">
+                <img class="story-bg-image" src="WhatsApp Image 2026-02-11 at 06.57.55.jpeg" alt="Présentation au père">
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Ensuite, Khadija l'a présenté à son père, qui a donné son accord pour leur mariage.</p>
+                <span class="story-caption reveal-caption">La bénédiction familiale</span>
+            </div>
+        </div>
+
+        <!-- Story 8 : La demande en mariage -->
+        <div class="story-slide" data-index="7">
+            <div class="story-bg" style="background: #000;">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-08 at 01.51.04_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                    <p class="story-text-content reveal-words"
+                    style="color:#fff; text-shadow: 0 2px 16px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6), 0 4px 4px rgba(0,0,0,0.8); font-weight: 700;">
+                    Le jour de la fete d'anniversaire de Khadija, Mouhamed lui a fait sa demande en mariage 💍</p>
+                <span class="story-caption reveal-caption"
+                    style="color:#fff; text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.5); font-weight: 600; background: rgba(0,0,0,0.35); padding: 6px 18px; border-radius: 20px;">La
+                    demande en mariage</span>
+            </div>
+        </div>
+
+        <!-- Story 9 : La discussion des familles -->
+        <div class="story-slide" data-index="8">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-11 at 06.55.16_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Un mois plus tard, les deux familles se sont rencontrées pour discuter de leur avenir.</p>
+                <span class="story-caption reveal-caption">La rencontre des familles</span>
+            </div>
+        </div>
+
+
+        <!-- INTERLUDE VIDÉO : La demande en mariage (journey_compatible.mp4) - Entre slides 7 et 8 -->
+        <div id="interludeProposal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; flex-direction: column; justify-content: center; align-items: center;">
+            <video id="interludeProposalVideo" style="width: 100%; height: 100%; object-fit: contain; background: #000;" autoplay muted playsinline webkit-playsinline>
+                <source src="journey_compatible.mp4" type="video/mp4">
+            </video>
+            <button id="interludeUnmuteBtn" style="position: absolute; top: 24px; left: 50%; transform: translateX(-50%); padding: 10px 18px; background: rgba(0,0,0,0.55); color: #fff; border: 1px solid rgba(255,255,255,0.6); border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 700; z-index: 1002; backdrop-filter: blur(6px);">🔊 Activer le son</button>
+            <!-- Boutons de navigation -->
+            <div style="position: absolute; bottom: 30px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 20px; z-index: 1001;">
+                <button id="interludePrevBtn" style="padding: 12px 24px; background: rgba(255,255,255,0.3); color: #fff; border: 1px solid #fff; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s; backdrop-filter: blur(10px);">← Précédent</button>
+                <button id="interludeNextBtn" style="padding: 12px 24px; background: rgba(255,255,255,0.3); color: #fff; border: 1px solid #fff; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s; backdrop-filter: blur(10px);">Suivant →</button>
+            </div>
+        </div>
+
+        <!-- Story 10 : Le mariage religieux (Partie 1) - COLLAGE de 2 vidéos horizontales -->
+        <div class="story-slide" data-index="9" data-reveal-ms="4000" data-video-behavior="loop-until-text">
+            <div class="story-bg story-bg-collage">
+                <div class="video-collage">
+                    <video class="collage-video" autoplay muted playsinline webkit-playsinline preload="metadata">
+                        <source src="WhatsApp Video 2026-04-06 at 21.00.31.mp4" type="video/mp4">
+                    </video>
+                    <video class="collage-video" autoplay muted playsinline webkit-playsinline preload="metadata">
+                        <source src="WhatsApp Video 2026-04-06 at 20.53.11.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+            <div class="story-content">
+                <p class="story-text-content reveal-words">Le mariage religieux a été scellé chez Khadija, Alhamdulillah.</p>
+                <span class="story-caption reveal-caption">Nikah scellé, Alhamdulillah</span>
+            </div>
+        </div>
+
+        <!-- Story 11 : Le mariage religieux (Partie 2) -->
+        <div class="story-slide" data-index="10" data-reveal-ms="2200" data-video-behavior="stop-at-text-end">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata">
+                    <source src="WhatsApp Video 2026-04-06 at 20.53.19.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);width:min(92%,520px);margin:0;padding:12px 20px 10px;z-index:12;align-self:auto;">
+                <p class="story-text-content reveal-words">Leur mariage religieux a été scellé chez Khadija, Alhamdulillah.</p>
+                <span class="story-caption reveal-caption">Nikah scellé, Alhamdulillah</span>
+            </div>
+        </div>
+
+        <!-- Story 12 : Les préparatifs des festivités -->
+        <div class="story-slide story-centered" data-index="11">
+            <div class="story-bg">
+                <video class="story-bg-video" autoplay muted playsinline webkit-playsinline preload="metadata" loop>
+                    <source src="WhatsApp Video 2026-02-11 at 06.58.06_compatible.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">Les préparatifs continuent pour la fête de leur réception du mariage.</p>
+                <span class="story-caption reveal-caption">Préparatifs de la réception</span>
+            </div>
+        </div>
+
+        <!-- Story 13 : Les festivités -->
+        <div class="story-slide" data-index="12" data-media-fit="contain">
+            <div class="story-bg">
+                <img class="story-bg-image-bg" src="WhatsApp Image 2026-04-06 at 21.31.38.jpeg" alt="" aria-hidden="true">
+                <img class="story-bg-image" src="WhatsApp Image 2026-04-06 at 21.31.38.jpeg" alt="Les festivités">
+            </div>
+            <div class="story-content">
+                
+                <p class="story-text-content reveal-words">In sha Allah, le 18 avril, on se retrouvera pour célébrer ce beau chapitre avec eux.</p>
+                <span class="story-caption reveal-caption">Les festivités du 18 avril</span>
+            </div>
+        </div>
+
+        <!-- Zones de navigation (invisibles, couvrent gauche et droite de l'écran) -->
+        <div class="story-nav">
+            <div class="story-nav-left" id="storyNavLeft"></div>
+            <div class="story-nav-right" id="storyNavRight"></div>
+        </div>
+    </div>
+
+
+    <!-- ================================================================
+         SECTION INFOS — Design original, chaleureux et fun
+         Fond crème/doré avec timeline, cartes arrondies et confettis
+         ================================================================ -->
+    <section class="info-section" id="info-section">
+
+        <!-- Confettis décoratifs en fond -->
+        <div class="info-confetti" id="infoConfetti"></div>
+
+        <!-- En-tête avec les noms -->
+        <div class="info-header fade-in">
+            <div class="info-bismillah">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</div>
+            <h1 class="info-names">Mouhamed<span class="info-amp">&</span>Khadija</h1>
+            <div class="info-tagline">ont le bonheur de vous inviter à célébrer leurs festivités de mariage</div>
+        </div>
+
+        <!-- Date en grand -->
+        <div class="info-date-card fade-in">
+            <div class="info-date-day">Samedi</div>
+            <div class="info-date-month">18 Avril 2026</div>
+        </div>
+
+        <!-- Compte à rebours circulaire -->
+        <div class="info-countdown-section fade-in">
+            <div class="info-cd-title">⏳ On compte les jours...</div>
+            <div class="info-countdown" id="countdown">
+                <div class="info-cd-item">
+                    <div class="info-cd-circle">
+                        <span class="info-cd-num" id="cd-days">--</span>
+                    </div>
+                    <span class="info-cd-label">jours</span>
+                </div>
+                <div class="info-cd-sep">:</div>
+                <div class="info-cd-item">
+                    <div class="info-cd-circle">
+                        <span class="info-cd-num" id="cd-hours">--</span>
+                    </div>
+                    <span class="info-cd-label">heures</span>
+                </div>
+                <div class="info-cd-sep">:</div>
+                <div class="info-cd-item">
+                    <div class="info-cd-circle">
+                        <span class="info-cd-num" id="cd-mins">--</span>
+                    </div>
+                    <span class="info-cd-label">min</span>
+                </div>
+                <div class="info-cd-sep">:</div>
+                <div class="info-cd-item">
+                    <div class="info-cd-circle">
+                        <span class="info-cd-num" id="cd-secs">--</span>
+                    </div>
+                    <span class="info-cd-label">sec</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Lieu -->
+        <div class="info-card info-lieu fade-in">
+            <div class="info-card-icon">📍</div>
+            <h3 class="info-card-title">Où ça se passe ?</h3>
+            <p class="info-card-text">Grand Mbao<br><small>Lieu indiqué sur la carte — cliquez pour ouvrir Google Maps</small></p>
+            <a href="https://www.google.com/maps?q=14.7358056,-17.3115556" class="info-maps-btn" id="mapsLink" target="_blank" rel="noopener">🗺️ Ouvrir dans Maps</a>
+        </div>
+
+
+        <!-- Programme en timeline verticale -->
+        <div class="info-programme fade-in">
+            <h3 class="info-section-title">📅 Le programme</h3>
+            <div class="info-timeline">
+                <div class="tl-item">
+                    <div class="tl-time">Matin</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-emoji">🎸</div>
+                        <div class="tl-text">
+                            <strong>Yendu</strong>
+                            <span>Le matin, accompagné d’un guitariste</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-time">17h</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-emoji">👰</div>
+                        <div class="tl-text">
+                            <strong>Accueil de la mariée</strong>
+                            <span>Vers 17h, elle se présente et part saluer ses invités</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-time">Soirée</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-emoji">🥂</div>
+                        <div class="tl-text">
+                            <strong>Réception</strong>
+                            <span>Accueil, repas et moments de partage</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-time">Nuit</div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-emoji">🌙</div>
+                        <div class="tl-text">
+                            <strong>Le Seuyi</strong>
+                            <span>Elle part rejoindre son mari dans sa maison familiale</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Footer fun -->
+        <div class="info-footer fade-in">
+            <div class="info-footer-emoji">🤍</div>
+            <h2 class="info-footer-title">On a hâte !</h2>
+            <p class="info-footer-text">Votre présence rendra ce jour encore plus beau.<br>Qu'Allah bénisse cette union.
+            </p>
+            <div class="info-footer-hearts">❤️ 🧡 💛 💚 💙 💜</div>
+        </div>
+
+        <a href="#" class="revoir-btn" id="revoirBtn" onclick="event.preventDefault(); location.reload();">
+            🔄 Revoir notre histoire
+        </a>
+
+    </section>
+
+    <!-- Crédit discret -->
+    <div class="credit" id="signature-bottom">Made with <span class="heart">❤️</span> by Sadiya</div>
+
+    <!-- Musique de fond — Youssou N'Dour - I Love You -->
+    <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+
+    <!-- ================================================================
+         JAVASCRIPT — Fichier séparé (logique interactive)
+         ================================================================ -->
+    <script src="js/script_simple.js?v=55"></script>
+
+</body>
+
+</html>
+
+
