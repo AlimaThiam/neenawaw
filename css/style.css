@@ -1591,7 +1591,7 @@ video::-moz-media-controls {
    ========================================================================== */
 
 .info-section {
-    background: url('WhatsApp Image 2026-02-11 at 06.58.02.jpeg') no-repeat center center / cover;
+    background: linear-gradient(180deg, #fdf8f0 0%, #f5ead6 40%, #f0e0c8 70%, #fdf8f0 100%);
     color: #3a3028;
     padding: 60px 20px 40px;
     display: none;
@@ -2789,18 +2789,20 @@ video::-moz-media-controls {
     font-family: 'Dancing Script', cursive;
     font-size: 16px;
     font-weight: 400;
-    color: #5a3e2b; /* Couleur sombre pour contraste sur fond blanc */
+    color: #fff; /* Blanc pour contraste sur l'image */
     cursor: pointer;
     transition: all 0.5s ease-out;
     opacity: 0;
     visibility: hidden;
     text-shadow: none; /* Supprimer l'ombre pour plus de clarté */
     letter-spacing: 0.5px;
+    background: url('WhatsApp Image 2026-02-11 at 06.58.02.jpeg') no-repeat center center / cover;
+    padding: 20px;
 }
 
 .credit:hover {
     font-size: 18px;
-    color: #3a2a1f; /* Plus sombre au hover */
+    color: #f0f0f0; /* Légèrement plus clair au hover */
 }
 
 .heart {
