@@ -2792,8 +2792,8 @@ video::-moz-media-controls {
     color: #000; /* Noir pour visibilité */
     cursor: pointer;
     transition: all 0.5s ease-out;
-    opacity: 0;
-    visibility: hidden;
+    opacity: 1;
+    visibility: visible;
     text-shadow: none; /* Pas d'ombre */
     letter-spacing: 0.5px;
 }
