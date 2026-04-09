@@ -1591,8 +1591,8 @@ video::-moz-media-controls {
    ========================================================================== */
 
 .info-section {
-    background: linear-gradient(180deg, #fdf8f0 0%, #f5ead6 40%, #f0e0c8 70%, #fdf8f0 100%);
-    color: #3a3028;
+    background: url('WhatsApp Image 2026-02-11 at 06.58.02.jpeg') no-repeat center center / cover;
+    color: #fff;
     padding: 60px 20px 40px;
     display: none;
     flex-direction: column;
@@ -2694,6 +2694,7 @@ video::-moz-media-controls {
 .info-section .tl-text span,
 .info-section .tl-text strong {
     color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 .info-section .info-section-title,
